@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <StartupObject>BatmanLightsControl.App</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="AndroidLightsControl\**" />
+    <EmbeddedResource Remove="AndroidLightsControl\**" />
+    <None Remove="AndroidLightsControl\**" />
+    <Page Remove="AndroidLightsControl\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="batman-logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="batman-logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
