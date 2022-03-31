@@ -25,13 +25,17 @@ Turn a segment (multiple leds) on with a specific color. Segments are hard coded
 
     /segment/{[id]}/color/{[RGB as int]}
 
-Turn a segment excludivly on. All other segments are turned off.
+Turn a segment exclusivly on. All other segments are turned off.
 
     /xsegment/{[id]}/color/{[RGB as int]}
 
 Turn all segments off
 
     /off
+
+Turn all segments on with the given color
+
+    /on/{[RGB as int]}
 
 
 ## Spinning Lights
@@ -44,10 +48,15 @@ Set speed to rounds per second.
 
     /speed/{[rps]}
 
-Highlight some leds e.g. to focus on a segment. Start and end is the pixels itself, not a segment.
+Highlight a predefined segment (top x leds)
 
-    /highlight/{start}/{end}/color/{[RGB as int]}
+    /highlight/{[RGB as int]}
+
+Highlight a intersection of some leds e.g. to focus on a segment. Start and end are the pixels itself, not a segment.
+
+    /section/{start}/{end}/color/{[RGB as int]}
 
 Turn all segments off
 
     /off
+
