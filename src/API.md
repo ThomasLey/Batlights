@@ -1,15 +1,14 @@
 # API Description
 
-Description of the API entpoints.
+Description of the API endpoints.
 
 mDNS support.
 
 Simple http get calls. No authentication.
 
 
-## Batlights
+## BatmanLight
 
-__todo__
 
     /animation/{all, single, invert, kitt}
 
@@ -25,7 +24,7 @@ Turn a segment (multiple leds) on with a specific color. Segments are hard coded
 
     /segment/{[id]}/color/{[RGB as int]}
 
-Turn a segment exclusivly on. All other segments are turned off.
+Turn a segment exclusively on. All other segments are turned off.
 
     /xsegment/{[id]}/color/{[RGB as int]}
 
@@ -33,7 +32,7 @@ Turn all segments off
 
     /off
 
-Turn all segments on with the given color
+Turn all segments on with the given colour
 
     /on/{[RGB as int]}
 

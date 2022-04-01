@@ -21,6 +21,7 @@ uint8_t aniColorR = 0;
 uint8_t aniColorG = 0;
 uint8_t aniColorB = 0;
 bool wm_nonblocking = false; // change to true to use non blocking
+String defaultHostname = "batman2";
 
 WiFiManager wm;
 String hostname = wm.getWiFiHostname();
@@ -84,10 +85,20 @@ void setAnimation(String animation) {
   aniType = animation;
   aniLed = 0;
   
-  if (animation == "single" || animation == "kitt")
+  if (animation == "single" || animation == "kitt" || animation == "standby")
     pixels.clear(); // we start with a clean "ring"
   if (animation == "invert" || animation == "all")
     pixels.fill(pixels.Color(aniColorR, aniColorG, aniColorB)); // we start with a fill "ring"
+  pixels.show();
+}
+
+void setMoving(int time) {
+  if (aniType != "standby" && aniType != "moving")
+    return;
+  
+  aniType = "moving";
+  aniDelayToWait = time * 1000;
+  pixels.fill(pixels.Color(255, 255, 255));
   pixels.show();
 }
 
@@ -106,6 +117,13 @@ void defineEndpoints() {
     server.send(200, "text/plain", getStatusJson());
   });
   
+  server.on(UriBraces("/move/{}"), []() {
+    String timeStr = server.pathArg(0);
+    int time = timeStr.toInt();
+    setMoving(time);
+    server.send(200, "text/plain", getStatusJson());
+  });
+  
   server.on(UriBraces("/speedCode/{}"), []() {
     String speedCode = server.pathArg(0);
     setSpeedCode(speedCode);
@@ -121,7 +139,7 @@ void setup() {
   Serial.setDebugOutput(true);
   wm.setDebugOutput(false);
   if (wm.getWiFiHostname() == "") {
-    wm.setHostname("batman");
+    wm.setHostname(defaultHostname);
   }
   hostname = wm.getWiFiHostname();
   Serial.println("\n Starting BATLIGHT as " + hostname);
@@ -235,6 +253,8 @@ void checkButton(){
       // start portal w delay
       Serial.println("Starting config portal");
       pixels.setPixelColor(8, pixels.Color(255, 0, 0));
+      server.stop();
+      pixels.setPixelColor(9, pixels.Color(255, 0, 0));
       pixels.show();
       wm.setConfigPortalTimeout(180);
       
@@ -244,7 +264,7 @@ void checkButton(){
         for(int i=0; i<NUMPIXELS; i++) {
           pixels.setPixelColor(i, pixels.Color(255, 0, 64));
           pixels.show();
-          delay(30);
+          delay(30); 
         }
         pixels.clear();
         pixels.show();
@@ -319,7 +339,12 @@ void MoveNextAnimation() {
     pixels.setPixelColor((aniLed + 1 + NUMPIXELS) % NUMPIXELS, pixels.Color(aniColorR/16, aniColorG/16, aniColorB/16));
     pixels.setPixelColor(aniLed, pixels.Color(aniColorR, aniColorG, aniColorB));
     pixels.show();
-  } else { // fallback "all"
+  }  else if (aniType == "moving") { // we need to strop moving
+    aniType = "standby";
+    pixels.clear();
+    pixels.show();
+    delay(maxDelayTime); 
+  } else { // fallback "all" or "standby"
     delay(maxDelayTime); 
     return;  
   }
