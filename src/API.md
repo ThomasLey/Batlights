@@ -59,3 +59,7 @@ Turn all segments off
 
     /off
 
+Turn all segments on with the given colour
+
+    /on/{[RGB as int]}
+
