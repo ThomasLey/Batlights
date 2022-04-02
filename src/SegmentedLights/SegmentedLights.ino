@@ -90,11 +90,13 @@ void setup() {
   for(int i=0; i<NUMPIXELS; i++) {
     pixels.setPixelColor(i, pixels.Color(i*8, 150, 0));
     pixels.show();
-    delay(30);
+    delay(10);
   }
   pixels.clear();
   pixels.show();
   
+  Serial.println("Initialize WLAN");
+  pixels.setPixelColor(0, pixels.Color(0, 150, 0)); pixels.show();
   WiFi.begin(WLAN_SSID, WLAN_PASS);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -102,15 +104,22 @@ void setup() {
   Serial.println("WiFi connected. IP address: "); Serial.println(WiFi.localIP());
 
   Serial.println("Define Server URI Handler");
+  pixels.setPixelColor(1, pixels.Color(0, 150, 0)); pixels.show();
   defineEndpoints();
 
   Serial.println("Starting server");
+  pixels.setPixelColor(2, pixels.Color(0, 150, 0)); pixels.show();
   server.begin();
 
   Serial.println("Setting mDNS");
+  pixels.setPixelColor(3, pixels.Color(0, 150, 0)); pixels.show();
   if (MDNS.begin(defaultHostname)) {
     Serial.println("MDNS responder started at " + defaultHostname);
   }
+
+  delay(2000);
+  pixels.clear();
+  pixels.show();
 }
 
 void loop() {

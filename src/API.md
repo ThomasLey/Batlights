@@ -49,13 +49,21 @@ Set speed to rounds per second.
 
 Highlight a predefined segment (top x leds)
 
-    /highlight/{[RGB as int]}
+    /highlight/
 
 Highlight a intersection of some leds e.g. to focus on a segment. Start and end are the pixels itself, not a segment.
 
-    /section/{start}/{end}/color/{[RGB as int]}
+    /section/{start}/{end}
 
 Turn all segments off
 
     /off
 
+
+The following set entpoints can be used
+
+    /setBackground/{color}
+    /setForeground/{color}
+    /setPps/{pixels per segment}
+    /setNos/{number of segments}
+    /setDirection/{increment, should be 1 or -1 (backwards), but can be any int}
