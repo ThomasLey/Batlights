@@ -8,15 +8,13 @@
 
 #define ESP32
 #define DATAPIN      2
-#define NUMPIXELS    300
-#define PPS          5
+#define NUMPIXELS    150
+#define PPS          10
 #define DEF_HOSTNAME "SEGLI"
 
 uint32_t lastSetColor = 0; // which is basically off
-int maxDelayTime = 100; // Max time to block the main loop with a delay. 
-int aniDelay = 250;
-int aniDelayToWait = 0; // if delay is too long, we can split wait time here (this is aniDelay modulo max wait time per cycle)
-int aniLed = 0; // led we are currently at
+uint32_t backgroundColor = 0;
+int maxDelayTime = 500; // Max time to block the main loop with a delay. 
 String defaultHostname = DEF_HOSTNAME;
 
 WiFiClient client;
@@ -32,7 +30,8 @@ String getStatusJson() {
     uint32_t pColor = pixels.getPixelColor(i);
     result += "  \""+String(i)+"\": "+pColor+",\r\n";
   }
-  result += "  \"mdns\": \""+defaultHostname+"\"\r\n";
+  result += "  \"mdns\": \""+defaultHostname+"\",\r\n";
+  result += "  \"backgroundColor\": \""+String(backgroundColor)+"\"\r\n";
   result += "}";
 
   return result;
@@ -52,6 +51,13 @@ void setSegment(uint32_t segment, uint32_t color) {
 void defineEndpoints() {
   server.on("/", handleRoot);
 
+  /* configuration endpoints */
+  server.on(UriBraces("/setBackground/{}"), []() {
+    backgroundColor = server.pathArg(0).toInt();
+    server.send(200, "text/plain", getStatusJson());
+  });
+
+  /* business endpoints */
   server.on(UriBraces("/segment/{}/color/{}"), []() {
     String segmentStr = server.pathArg(0);
     String colorStr = server.pathArg(1);
@@ -62,8 +68,14 @@ void defineEndpoints() {
   server.on(UriBraces("/xsegment/{}/color/{}"), []() {
     String segmentStr = server.pathArg(0);
     String colorStr = server.pathArg(1);
-    pixels.clear();
+    pixels.fill(backgroundColor);
     setSegment(segmentStr.toInt(), colorStr.toInt());    
+    server.send(200, "text/plain", getStatusJson());
+  });
+
+  server.on("/clear", []() {
+    pixels.fill(backgroundColor);
+    pixels.show();
     server.send(200, "text/plain", getStatusJson());
   });
 
@@ -125,4 +137,5 @@ void setup() {
 void loop() {
   server.handleClient();
   MDNS.update(); 
+  delay(maxDelayTime);
 }

@@ -58,9 +58,16 @@ void handleRoot() {
   server.send(200, "text/plain", getStatusJson());
 }
 
+void setStaticAnimation(String animation) {
+    aniType = animation;
+    aniDelay = 1000;
+    aniDelayToWait = aniDelay;
+}
+
 void defineEndpoints() {
   server.on("/", handleRoot);
 
+  /* configuration endpoints */
   server.on(UriBraces("/setBackground/{}"), []() {
     backgroundColor = server.pathArg(0).toInt();
     server.send(200, "text/plain", getStatusJson());
@@ -86,7 +93,7 @@ void defineEndpoints() {
     server.send(200, "text/plain", getStatusJson());
   });
 
-
+  /* business endpoints */
   server.on(UriBraces("/speed/{}"), []() {
     String speedStr = server.pathArg(0);
     float rps = speedStr.toFloat();
@@ -96,11 +103,8 @@ void defineEndpoints() {
     server.send(200, "text/plain", getStatusJson());
   });
 
-  server.on(UriBraces("/highlight/"), []() {
-    Serial.println("setting highlight");
-    aniType = "highlight";
-    aniDelay = 1000;
-    aniDelayToWait = aniDelay;
+  server.on(UriBraces("/highlight/{}"), []() {
+    setStaticAnimation("highlight");
     // create ui setup
     pixels.fill(backgroundColor);
     pixels.setPixelColor(0, foregroundColor);
@@ -109,23 +113,17 @@ void defineEndpoints() {
   });
 
   server.on("/off", []() {
-    Serial.println("setting off");
+    setStaticAnimation("off");
     pixels.clear();
     pixels.show();
-    aniType = "off";
-    aniDelay = 1000;
-    aniDelayToWait = aniDelay;
     server.send(200, "text/plain", getStatusJson());
   });
 
   server.on(UriBraces("/on/{}"), []() {
-    Serial.println("setting on");
     String colorStr = server.pathArg(0);
+    setStaticAnimation("on");
     pixels.fill(colorStr.toInt());
     pixels.show();
-    aniType = "off";
-    aniDelay = 1000;
-    aniDelayToWait = aniDelay;
     server.send(200, "text/plain", getStatusJson());
   });
 }

@@ -8,9 +8,9 @@
 #include <uri/UriRegex.h>
 
 #define ESP32
-#define PIN         2
-#define TRIGGER_PIN 0
-#define NUMPIXELS   30
+#define PIN         2  // pin for the led strip
+#define TRIGGER_PIN 0  // required for reste Wifi
+#define NUMPIXELS   30 // number of pixels for array
 
 int maxDelayTime = 100; // Max time to block the main loop with a delay. 
 int aniDelay = 250;
@@ -111,6 +111,11 @@ void defineEndpoints() {
     server.send(200, "text/plain", getStatusJson());
   });
   
+  server.on(UriBraces("/color/{}"), []() {
+    foregroundColor = server.pathArg(0).toInt();
+    server.send(200, "text/plain", getStatusJson());
+  });
+
   server.on(UriBraces("/animation/{}"), []() {
     String animation = server.pathArg(0);
     setAnimation(animation);
