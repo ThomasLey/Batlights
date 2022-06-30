@@ -16,9 +16,9 @@ The result of all calls is the status of the lights as json.
 
 _NIE_ Change the direction using an increment/decrement value.
 
-Set the animation for the lights. _All_ means a static colour, _single_ a few (_NIE_ a configuration) LEDs, _inverted_ a few LEDs which are turned off and kitt, which is basically "single" but with more leds and a fade out at the other LEDS.
+Set the animation for the lights. _All_ means a static colour, _single_ a few (_NIE_ a configuration) LEDs, _inverted_ a few LEDs which are turned off and kitt, which is basically "single" but with more leds and a fade out at the other LEDS. _standby_ is used to active the move functionality.
 
-    /animation/{all, single, invert, kitt}
+    /animation/{all, single, invert, kitt, standby}
 
 To change the colour, BatLights support some common colours, which are at the moment the 255/0 combination of RGB. _NIE_ to use full RGB colour.
 
@@ -27,6 +27,10 @@ To change the colour, BatLights support some common colours, which are at the mo
 The speed code defines a string for different speeds from turtle (2s per increment) to fast (1ms). _NIE_ to use a numerical value for the speed in ms. 
 
     /speedCode/{turtle, veryslow, slow, medium, fast, veryfast, max}
+
+the move endpoint can be used to turn on the batlight for a specific amount of time. E.g. for a move sensor which invokes this endpoint.
+
+    /move/{time in ms}
 
 ## Segmented Lights
 
